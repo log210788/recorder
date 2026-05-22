@@ -979,6 +979,7 @@
                 <span class="pulse-dot"></span> <span id="record-btn-text">Record Voice</span>
               </button>
               <button class="btn btn-secondary" id="playback-btn" onclick="playRecording()" disabled>▶ Playback Voice</button>
+              <button class="btn btn-secondary" id="save-btn" onclick="saveRecording()" disabled style="background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); color: #10b981;">💾 Save to Computer</button>
               <span class="rec-time" id="timer-display">00:00</span>
             </div>
           </div>
@@ -3273,6 +3274,7 @@
             audioUrl = URL.createObjectURL(audioBlob);
             audioPlayer.src = audioUrl;
             document.getElementById("playback-btn").disabled = false;
+            document.getElementById("save-btn").disabled = false;
             cancelAnimationFrame(animationFrameId);
             drawStaticWaveform();
           };
@@ -3298,9 +3300,27 @@
           // Simulation stop
           cancelAnimationFrame(animationFrameId);
           document.getElementById("playback-btn").disabled = false;
+          document.getElementById("save-btn").disabled = false;
           drawStaticWaveform();
         }
       }
+    }
+
+    function saveRecording() {
+      if (!audioBlob) return;
+      const now = new Date();
+      const timestamp = now.getFullYear().toString() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') + '_' +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0') +
+        String(now.getSeconds()).padStart(2, '0');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(audioBlob);
+      a.download = 'vinh_recording_' + timestamp + '.wav';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 
     function visualizeRealTime() {
